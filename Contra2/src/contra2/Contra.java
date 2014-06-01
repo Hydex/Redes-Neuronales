@@ -1,0 +1,292 @@
+package contra2;
+
+import java.awt.Canvas;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.TexturePaint;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.image.BufferStrategy;
+import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+public class Contra extends Canvas implements Escenario, KeyListener {
+
+    private final BufferStrategy strategy;
+    private long usedTime;
+    private int velocidadFPS = 40;
+
+    private ArrayList actores;
+
+    private final CargaDeImagen cargaDeImagen;
+    private final CargaDeSonidos cargaDeSonidos;
+
+    boolean finDelJuego = false, pausa = false;
+
+    private int aux1 = 0, aux2 = 0, t = 0, velocidadMuerte = 4;
+    Jugador jugador;
+    Fondo fondo;
+    Actor actor;//Enemigos, balas enemigas y las balas del jugador
+
+    public Contra() {
+        cargaDeImagen = new CargaDeImagen();
+        cargaDeSonidos = new CargaDeSonidos();
+
+        JFrame ventana = new JFrame("CONTRA");
+        JPanel panel = (JPanel) ventana.getContentPane();
+        setBounds(0, 0, Escenario.ANCHO, Escenario.LARGO);
+        panel.setPreferredSize(new Dimension(Escenario.ANCHO, Escenario.LARGO));
+        panel.setLayout(null);
+        panel.add(this);
+
+        ventana.setBounds(0, 0, Escenario.ANCHO, Escenario.LARGO);
+        ventana.setVisible(true);
+        ventana.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                System.exit(0);
+            }
+        });
+        ventana.setResizable(false);
+        createBufferStrategy(2);
+        strategy = getBufferStrategy();
+        requestFocus();
+        addKeyListener(this);
+    }
+
+    public static void main(String[] args) {
+        Contra c = new Contra();
+        c.juego();
+    }
+
+    public void juego() {
+        usedTime = 100;
+        iniciarMundo();
+        while (isVisible() && !finDelJuego) {
+            long startTime = System.currentTimeMillis();
+
+            if (pausa) {
+                pintarPausaJuego();
+            } else {
+                actualizarMundo();
+                verificarColision();
+                pintarMundo();
+            }
+            jugador.rebobinar();
+            do {
+                Thread.yield();
+            } while (System.currentTimeMillis() - startTime < 1000 / velocidadFPS);
+        }
+
+        if (aux1 >= 1000) {
+            pintarGanarJuego();
+        } else {
+            pintarFinDeJuego();
+        }
+    }
+
+    public void iniciarMundo() {
+        //Incializar fondo     
+        fondo = new Fondo(this);
+
+        //Incializar enemigos
+        actores = new ArrayList();
+        for (int i = 0; i < 1; i++) {
+            Enemigo m = new Enemigo(this);
+            m.setX(700);
+            m.setY((int) (Escenario.LARGO - 200));
+            m.setVx(1);
+            actores.add(m);
+        }
+
+        //Incializar jugador principal
+        jugador = new Jugador(this);
+        jugador.setX(Escenario.ANCHO / 6);
+        jugador.setY(Escenario.LARGO - 200);
+
+        strategy.show();
+    }
+
+    public void actualizarMundo()//genera los actores y marca a los que tiene que ser  removidos
+    {
+        int i = 0;
+        t++;//Variable auxiliar que permite que la desaparicion de un enemigo tra su muerte no sea rapida
+        while (i < actores.size()) {
+            Actor m = (Actor) actores.get(i);
+            if (m.verificarRemover() && t % velocidadMuerte == 0) {
+                t = 0;
+                actores.remove(i);
+            } else {
+                m.acto();
+                i++;
+            }
+        }
+        jugador.acto();
+    }
+
+    public void verificarColision() {
+        Rectangle dimensioJugador = jugador.getDimension();//dimensiones del fotograma del jugador
+        for (int i = 0; i < actores.size(); i++) {
+            Actor a1 = (Actor) actores.get(i);
+            Rectangle r1 = a1.getDimension();
+            if (r1.intersects(dimensioJugador)) {
+                jugador.colision(a1);
+                a1.colision(jugador);
+            }  
+            
+            for (int j = i + 1; j < actores.size(); j++) {
+                Actor a2 = (Actor) actores.get(j);
+                Rectangle r2 = a2.getDimension();
+                if (r1.intersects(r2)) {
+                    a1.colision(a2);
+                    a2.colision(a1);
+                }
+            }
+        }
+    }
+
+    public void pintarMundo() {
+        Graphics2D g = (Graphics2D) strategy.getDrawGraphics();
+
+        fondo.pintar(g);
+        g.fillRect(0, 0, getWidth(), getHeight());       
+
+        for (int i = 0; i < actores.size(); i++) {
+            Actor m = (Actor) actores.get(i);
+            m.pintar(g);
+        }
+
+        pintarEstado(g);
+        jugador.pintar(g);
+        strategy.show();
+    }
+
+    public void pintarEstado(Graphics2D g) //pinta puntaje y vida
+    {
+        pintarPuntaje(g);
+        pintarVida(g);
+        pintarfps(g);
+    }
+
+    public void pintarPuntaje(Graphics2D g) {
+        g.setFont(new Font("Arial", Font.BOLD, 20));
+        g.setPaint(Color.green);
+        g.drawString("Puntaje:", 20, Escenario.LARGO / 15);
+        g.setPaint(Color.red);
+        g.drawString(jugador.getPuntaje() + "", 100, Escenario.LARGO / 15);
+    }
+
+    public void pintarVida(Graphics2D g) {
+        g.setPaint(Color.red);
+        g.fillRect(280, Escenario.LARGO / 15 - 17, Jugador.VIDA_MAXIMA, 30);
+
+        g.setPaint(Color.blue);
+        g.fillRect(280/*+Jugador.MAX_VIDA-jugador.getVida()*/, Escenario.LARGO / 15 - 17, jugador.getVida(), 30);
+
+        g.setFont(new Font("Arial", Font.BOLD, 20));
+        g.setPaint(Color.green);
+        g.drawString("Vida", 220, Escenario.LARGO / 15);
+
+    }
+
+    public void pintarfps(Graphics2D g) {
+        g.setFont(new Font("Arial", Font.BOLD, 12));
+        g.setColor(Color.white);
+        if (usedTime > 0) {
+            g.drawString(String.valueOf(1000 / usedTime) + " fps", Escenario.ANCHO - 50, Escenario.LARGO);
+        } else {
+            g.drawString("--- fps", Escenario.ANCHO - 50, Escenario.LARGO);
+        }
+    }
+
+    public void finDelJuego() {
+        finDelJuego = true;
+    }
+
+    public void agregarActor(Actor a) {
+        actores.add(a);
+    }
+
+    public Jugador getJugador() {
+        return jugador;
+    }
+
+    public void pintarFinDeJuego() {
+        Graphics2D g = (Graphics2D) strategy.getDrawGraphics();
+        g.setColor(Color.white);
+        g.setFont(new Font("Arial", Font.BOLD, 20));
+        g.drawString("FIN DEL JUEGO", Escenario.ANCHO / 2 - 50, Escenario.LARGO / 2 - 100);
+        strategy.show();
+    }
+
+    public void pintarGanarJuego() {
+        Graphics2D g = (Graphics2D) strategy.getDrawGraphics();
+        g.setColor(Color.white);
+        g.setFont(new Font("Arial", Font.BOLD, 20));
+        g.drawString("     GANASTE", Escenario.ANCHO / 2 - 50, Escenario.LARGO / 2 - 100);
+        g.drawString("Puntaje total : " + jugador.getPuntaje(), Escenario.ANCHO / 2 - 50, Escenario.LARGO / 2 - 70);
+        strategy.show();
+    }
+
+    public void pintarPausaJuego() {
+        Graphics2D g = (Graphics2D) strategy.getDrawGraphics();
+        g.setColor(Color.white);
+        g.setFont(new Font("Arial", Font.BOLD, 20));
+        g.drawString("PAUSA", Escenario.ANCHO / 2 - 50, Escenario.LARGO / 2 - 100);
+        strategy.show();
+    }
+
+    public CargaDeImagen getCargaDeImagen() {
+        return cargaDeImagen;
+    }
+
+    public CargaDeSonidos getCargaDeSonidos() {
+        return cargaDeSonidos;
+    }
+
+    public void keyPressed(KeyEvent e) {
+        if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+            pausa = !(pausa);
+        } else {
+            jugador.keyPressed(e);
+        }
+    }
+
+    public void keyReleased(KeyEvent e) {
+        jugador.keyReleased(e);
+    }
+
+    public void keyTyped(KeyEvent e) {
+    }
+
+    public void desplazamientoFondo() {
+        if (aux1 == 1000) {
+            finDelJuego();
+        }
+
+        aux1++;
+        if (jugador.getX() >= 200) {
+            fondo.setVelocidadFondo(fondo.getVelocidadFondo()-7);
+        }
+        if (aux1 % 100 == 0) {
+            aux2++;
+            Enemigo n = new Enemigo(this);
+            n.llamada(aux2);
+        }
+        if (aux1 % 150 == 0) {
+            NaveVida nv = new NaveVida(this);
+            nv.setVx(5);
+            nv.setX(750);
+            nv.setY(100);
+            agregarActor(nv);
+        }
+    }
+}
