@@ -6,13 +6,11 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.awt.TexturePaint;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferStrategy;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 import javax.swing.JFrame;
@@ -27,7 +25,6 @@ public class Contra extends Canvas implements Escenario, KeyListener {
     private ArrayList actores;
 
     private final CargaDeImagen cargaDeImagen;
-    private final CargaDeSonidos cargaDeSonidos;
 
     boolean finDelJuego = false, pausa = false;
 
@@ -38,7 +35,6 @@ public class Contra extends Canvas implements Escenario, KeyListener {
 
     public Contra() {
         cargaDeImagen = new CargaDeImagen();
-        cargaDeSonidos = new CargaDeSonidos();
 
         JFrame ventana = new JFrame("CONTRA");
         JPanel panel = (JPanel) ventana.getContentPane();
@@ -99,31 +95,32 @@ public class Contra extends Canvas implements Escenario, KeyListener {
 
         //Incializar enemigos
         actores = new ArrayList();
-        for (int i = 0; i < 1; i++) {
+        /*for (int i = 0; i < 1; i++) {
             Enemigo m = new Enemigo(this);
             m.setX(700);
             m.setY((int) (Escenario.LARGO - 200));
             m.setVx(1);
             actores.add(m);
-        }
+        }*/
 
         //Incializar jugador principal
         jugador = new Jugador(this);
-        jugador.setX(Escenario.ANCHO / 6);
-        jugador.setY(Escenario.LARGO - 200);
+        jugador.setX(Escenario.ANCHO / 8);
+        jugador.setY(Escenario.LARGO - jugador.getAlto());
 
         strategy.show();
     }
-
-    public void actualizarMundo()//genera los actores y marca a los que tiene que ser  removidos
+    
+    //genera los actores y marca a los que tiene que ser  removidos
+    public void actualizarMundo()
     {
         int i = 0;
-        t++;//Variable auxiliar que permite que la desaparicion de un enemigo tra su muerte no sea rapida
+        t++;//Variable auxiliar que permite que la desaparicion de un enemigo tras su muerte no sea rapida
         while (i < actores.size()) {
             Actor m = (Actor) actores.get(i);
-            if (m.verificarRemover() && t % velocidadMuerte == 0) {
-                t = 0;
+            if (m.verificarRemover() && t % velocidadMuerte == 0) {                
                 actores.remove(i);
+                t = 0;
             } else {
                 m.acto();
                 i++;
@@ -168,8 +165,9 @@ public class Contra extends Canvas implements Escenario, KeyListener {
         jugador.pintar(g);
         strategy.show();
     }
-
-    public void pintarEstado(Graphics2D g) //pinta puntaje y vida
+    
+    //pinta puntaje y vida
+    public void pintarEstado(Graphics2D g) 
     {
         pintarPuntaje(g);
         pintarVida(g);
@@ -246,10 +244,6 @@ public class Contra extends Canvas implements Escenario, KeyListener {
 
     public CargaDeImagen getCargaDeImagen() {
         return cargaDeImagen;
-    }
-
-    public CargaDeSonidos getCargaDeSonidos() {
-        return cargaDeSonidos;
     }
 
     public void keyPressed(KeyEvent e) {

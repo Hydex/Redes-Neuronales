@@ -28,7 +28,6 @@ public class NaveVida extends Actor{
             v.setY(getY());
             v.setVy(5);
             escenario.agregarActor(v);
-            escenario.getCargaDeSonidos().reproducirSonido("explosion.wav");
         }
     }
 

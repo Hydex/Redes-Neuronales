@@ -18,8 +18,6 @@ public interface Escenario extends ImageObserver {
 
     public CargaDeImagen getCargaDeImagen();
 
-    public CargaDeSonidos getCargaDeSonidos();
-
     public void agregarActor(Actor a);
 
     public Jugador getJugador();

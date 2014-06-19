@@ -109,7 +109,6 @@ public class Enemigo extends Actor {
                 escenario.agregarActor(b);
             }
             t2 = 0;
-            escenario.getCargaDeSonidos().reproducirSonido("photon.wav");
         }
     }
 

@@ -5,11 +5,13 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
 public class Actor {
-    protected int x, y;// posicion del actor
-    protected int ancho, largo;//ancho y largo del fotograma
 
-    protected String[] nombreImagen; //El nombre de las imagenes
+    protected int x, y;// posicion del actor
+    protected int ancho, alto;//ancho y largo del fotograma
+
+    protected Imagen[] imagenes; //Imagenes
     protected int numeroImagen;
+    protected String[] nombreImagen; //El nombre de las imagenes
 
     protected int velocidadImagen; //velocidad del cambio de fotogramas
     protected int t;
@@ -18,6 +20,8 @@ public class Actor {
     protected CargaDeImagen cargaDeImagen; ///permite la carga de los fotogramas
 
     protected boolean remover; // para remover un actor del juego
+    
+    protected boolean salto;
 
     public Actor(Escenario escenario) {
         this.escenario = escenario;
@@ -36,7 +40,13 @@ public class Actor {
     }
 
     public void pintar(Graphics2D g) {
-        g.drawImage(cargaDeImagen.getImagenes(nombreImagen[numeroImagen]), x, y, escenario);
+        if (imagenes == null) {
+            g.drawImage(cargaDeImagen.getImagenes(nombreImagen[numeroImagen]), x, y, escenario);
+        } else {
+            if (imagenes[numeroImagen].getImagen() == null) 
+                cargaDeImagen.getImagenes(this.imagenes[numeroImagen]);            
+            g.drawImage(imagenes[numeroImagen].getImagen(), x,(salto ? y - 20 : y-(imagenes[numeroImagen].getHeight()-20)), escenario);
+        }
     }
 
     public int getX() {
@@ -57,25 +67,36 @@ public class Actor {
 
     public void setNombreImagen(String[] names) {
         nombreImagen = names;
-        largo = 0;
+        alto = 0;
         ancho = 0;
         for (int i = 0; i < names.length; i++) {
             BufferedImage image = cargaDeImagen.getImagenes(nombreImagen[i]);
-            largo = Math.max(largo, image.getHeight());
+            alto = Math.max(alto, image.getHeight());
             ancho = Math.max(ancho, image.getWidth());
         }
     }
 
-    public int getLargo() {
-        return largo;
+    public void setNombreImagen(Imagen[] imagenes) {
+        this.imagenes = imagenes;
+        alto = 0;
+        ancho = 0;
+        for (int i = 0; i < this.imagenes.length; i++) {
+            cargaDeImagen.getImagenes(this.imagenes[i]);
+            alto = Math.max(alto, this.imagenes[i].getHeight());
+            ancho = Math.max(ancho, this.imagenes[i].getWidth());
+        }
+    }
+
+    public int getAlto() {
+        return alto;
     }
 
     public int getAncho() {
         return ancho;
     }
 
-    public void setLargo(int i) {
-        largo = i;
+    public void setAlto(int i) {
+        alto = i;
     }
 
     public void setAncho(int i) {
@@ -90,11 +111,12 @@ public class Actor {
         numeroImagen = i;
     }
 
-    public void acto() {    }
+    public void acto() {
+    }
 
     public Rectangle getDimension() //devuelve las dimensiones del fotograma
-    {
-        return new Rectangle(x, y, ancho, largo);
+        {
+        return new Rectangle(x, y, ancho, alto);
     }
 
     public void colision(Actor a) {
