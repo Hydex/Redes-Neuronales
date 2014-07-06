@@ -250,6 +250,19 @@ public class Contra extends Canvas implements Escenario, KeyListener {
         if (e.getKeyCode() == KeyEvent.VK_ENTER) {
             pausa = !(pausa);
         } else {
+            
+            switch (e.getKeyCode()) {
+                case KeyEvent.VK_LEFT:
+                    if(fondo.getX()<0){
+			fondo.setX(fondo.getX()+1);
+                    }
+                    break;
+		case KeyEvent.VK_RIGHT:
+                    if(fondo.getX()>-(fondo.getAncho()-this.getWidth())){
+			fondo.setX(fondo.getX()-1);
+                    }
+                    break;
+            }
             jugador.keyPressed(e);
         }
     }
