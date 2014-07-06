@@ -67,27 +67,29 @@ public class Contra extends Canvas implements Escenario, KeyListener {
     public void juego() {
         usedTime = 100;
         iniciarMundo();
-        while (isVisible() && !finDelJuego) {
-            long startTime = System.currentTimeMillis();
-
-            if (pausa) {
-                pintarPausaJuego();
-            } else {
-                actualizarMundo();
-                verificarColision();
-                pintarMundo();
+        new Thread(new Runnable() {
+            public void run() {
+                while (isVisible() && !finDelJuego) {
+                    long startTime = System.currentTimeMillis();
+                    if (pausa) {
+                        pintarPausaJuego();
+                    } else {
+                        actualizarMundo();
+                        verificarColision();
+                        pintarMundo();
+                    }
+                    jugador.rebobinar();
+                    do {
+                        Thread.yield();
+                    } while (System.currentTimeMillis() - startTime < 1000 / velocidadFPS);
+                }
+                if (aux1 >= 1000) {
+                    pintarGanarJuego();
+                } else {
+                    pintarFinDeJuego();
+                }
             }
-            jugador.rebobinar();
-            do {
-                Thread.yield();
-            } while (System.currentTimeMillis() - startTime < 1000 / velocidadFPS);
-        }
-
-        if (aux1 >= 1000) {
-            pintarGanarJuego();
-        } else {
-            pintarFinDeJuego();
-        }
+        }).run();
     }
 
     public void iniciarMundo() {
