@@ -255,13 +255,14 @@ public class Contra extends Canvas implements Escenario, KeyListener {
             
             switch (e.getKeyCode()) {
                 case KeyEvent.VK_LEFT:
+                    System.out.println("pos jug : "+jugador.getX());
                     if(fondo.getX()<0){
-			fondo.setX(fondo.getX()+1);
+			fondo.setX(fondo.getX()+2);
                     }
                     break;
 		case KeyEvent.VK_RIGHT:
                     if(fondo.getX()>-(fondo.getAncho()-this.getWidth())){
-			fondo.setX(fondo.getX()-1);
+			fondo.setX(fondo.getX()-2);
                     }
                     break;
             }
