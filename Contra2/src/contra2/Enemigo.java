@@ -86,7 +86,7 @@ public class Enemigo extends Actor {
             m.setIzquierda(false);
         }
 
-        m.setY((int) (Escenario.LARGO - 160));
+        m.setY((int) (Escenario.ALTO - 160));
         m.setVx(2);
         escenario.agregarActor(m);
     }

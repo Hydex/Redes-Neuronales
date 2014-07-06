@@ -123,7 +123,7 @@ public class Jugador extends Actor {
                 }
 
                 auxContSalto = (subiendo ? auxContSalto + 1 : auxContSalto - 1);
-                super.setY(Escenario.LARGO - super.getAlto() - auxContSalto * VELOCIDAD_SALTO_JUGADOR);
+                super.setY(Escenario.ALTO - super.getAlto() - auxContSalto * VELOCIDAD_SALTO_JUGADOR);
 
                 if (auxContSalto == 0) {
                     salto = false;
@@ -158,22 +158,22 @@ public class Jugador extends Actor {
     public void keyPressed(KeyEvent e) {
         switch (e.getKeyCode()) {
             case KeyEvent.VK_LEFT:
-                if (auxContSalto == 0)super.setY(Escenario.LARGO - super.getAlto());
+                if (auxContSalto == 0)super.setY(Escenario.ALTO - super.getAlto());
                 izquierda = true;
                 break;
 
             case KeyEvent.VK_RIGHT:
-                if (auxContSalto == 0)super.setY(Escenario.LARGO - super.getAlto());
+                if (auxContSalto == 0)super.setY(Escenario.ALTO - super.getAlto());
                 derecha = true;
                 break;
 
             case KeyEvent.VK_UP:
-                if (auxContSalto == 0)super.setY(Escenario.LARGO - super.getAlto());
+                if (auxContSalto == 0)super.setY(Escenario.ALTO - super.getAlto());
                 arriba = true;
                 break;
 
             case KeyEvent.VK_DOWN:
-                if (auxContSalto == 0)super.setY(Escenario.LARGO - super.getAlto());
+                if (auxContSalto == 0)super.setY(Escenario.ALTO - super.getAlto());
                 abajo = true;
                 break;
 
@@ -194,23 +194,23 @@ public class Jugador extends Actor {
     public void keyReleased(KeyEvent e) {
         switch (e.getKeyCode()) {
             case KeyEvent.VK_LEFT:
-                if (auxContSalto == 0)super.setY(Escenario.LARGO - super.getAlto());
+                if (auxContSalto == 0)super.setY(Escenario.ALTO - super.getAlto());
                 izquierda = false;
                 break;
 
             case KeyEvent.VK_RIGHT:
-                if (auxContSalto == 0)super.setY(Escenario.LARGO - super.getAlto());
+                if (auxContSalto == 0)super.setY(Escenario.ALTO - super.getAlto());
                 derecha = false;
                 break;
 
             case KeyEvent.VK_UP:
-                if (auxContSalto == 0)super.setY(Escenario.LARGO - super.getAlto());
+                if (auxContSalto == 0)super.setY(Escenario.ALTO - super.getAlto());
                 setCurrentFrame(posIzq ? 7 : 0);
                 arriba = false;
                 break;
 
             case KeyEvent.VK_DOWN:
-                if (auxContSalto == 0)super.setY(Escenario.LARGO - super.getAlto());
+                if (auxContSalto == 0)super.setY(Escenario.ALTO - super.getAlto());
                 setCurrentFrame(posIzq ? 7 : 0);
                 abajo = false;
                 break;

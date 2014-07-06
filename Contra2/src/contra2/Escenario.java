@@ -11,8 +11,9 @@ package contra2;
 import java.awt.image.ImageObserver;
 
 public interface Escenario extends ImageObserver {
-    public static final int ANCHO = 750;//Ancho de la ventana
-    public static final int LARGO = 550;//Largo de la ventana
+    
+    public static final int ANCHO = 256;//Ancho de la ventana
+    public static final int ALTO = 192;//Largo de la ventana
 
     public static final int SPEED = 10;
 

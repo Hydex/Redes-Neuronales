@@ -14,13 +14,15 @@ public class Fondo extends Actor {
 
     public Fondo(Escenario escenario) {
         super(escenario);
-        setNombreImagen(new String[]{"fondo.jpg"});
+        setNombreImagen(new String[]{"escena.png"});
+        x = 0;
+        y = 0;
     }
 
     public void pintar(Graphics2D g) {
         super.pintar(g);
-        auxFondo = cargaDeImagen.getImagenes("fondo.jpg");
-        g.setPaint(new TexturePaint(auxFondo, new Rectangle(getVelocidadFondo(), 0, auxFondo.getWidth(), auxFondo.getHeight())));
+        auxFondo = cargaDeImagen.getImagenes(nombreImagen[0]);
+        g.setPaint(new TexturePaint(auxFondo, new Rectangle(x, y, auxFondo.getWidth(), auxFondo.getHeight())));
     }
 
     public int getVelocidadFondo() {

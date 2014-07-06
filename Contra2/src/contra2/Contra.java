@@ -21,40 +21,41 @@ public class Contra extends Canvas implements Escenario, KeyListener {
     private final BufferStrategy strategy;
     private long usedTime;
     private int velocidadFPS = 40;
-
     private ArrayList actores;
-
     private final CargaDeImagen cargaDeImagen;
-
     boolean finDelJuego = false, pausa = false;
-
     private int aux1 = 0, aux2 = 0, t = 0, velocidadMuerte = 4;
     Jugador jugador;
     Fondo fondo;
-    Actor actor;//Enemigos, balas enemigas y las balas del jugador
+    Actor actor;//Enemigos, balas enemigas y las balas del jugador    Actor actor;//Enemigos, balas enemigas y las balas del jugador
+    public int escala;
 
     public Contra() {
+        escala = 3;
         cargaDeImagen = new CargaDeImagen();
 
-        JFrame ventana = new JFrame("CONTRA");
-        JPanel panel = (JPanel) ventana.getContentPane();
-        setBounds(0, 0, Escenario.ANCHO, Escenario.LARGO);
-        panel.setPreferredSize(new Dimension(Escenario.ANCHO, Escenario.LARGO));
-        panel.setLayout(null);
-        panel.add(this);
-
-        ventana.setBounds(0, 0, Escenario.ANCHO, Escenario.LARGO);
+        JFrame ventana = new JFrame("Contra");
         ventana.setVisible(true);
         ventana.addWindowListener(new WindowAdapter() {
-            @Override
             public void windowClosing(WindowEvent e) {
                 System.exit(0);
             }
         });
         ventana.setResizable(false);
+        JPanel panel = (JPanel) ventana.getContentPane();
+        panel.setPreferredSize(new Dimension(ANCHO*escala, ALTO*escala));
+        panel.setLayout(null);
+        panel.add(this);
+        panel.setBackground(Color.white);
+        ventana.pack();
+        
         createBufferStrategy(2);
         strategy = getBufferStrategy();
+        setBounds(0,0,Escenario.ANCHO*escala,Escenario.ALTO*escala);
+        setBackground(Color.black);
         requestFocus();
+        setIgnoreRepaint(true);
+        
         addKeyListener(this);
     }
 
@@ -106,7 +107,7 @@ public class Contra extends Canvas implements Escenario, KeyListener {
         //Incializar jugador principal
         jugador = new Jugador(this);
         jugador.setX(Escenario.ANCHO / 8);
-        jugador.setY(Escenario.LARGO - jugador.getAlto());
+        jugador.setY(Escenario.ALTO - jugador.getAlto());
 
         strategy.show();
     }
@@ -152,7 +153,8 @@ public class Contra extends Canvas implements Escenario, KeyListener {
 
     public void pintarMundo() {
         Graphics2D g = (Graphics2D) strategy.getDrawGraphics();
-
+        g.scale(escala, escala);
+        
         fondo.pintar(g);
         g.fillRect(0, 0, getWidth(), getHeight());       
 
@@ -177,21 +179,21 @@ public class Contra extends Canvas implements Escenario, KeyListener {
     public void pintarPuntaje(Graphics2D g) {
         g.setFont(new Font("Arial", Font.BOLD, 20));
         g.setPaint(Color.green);
-        g.drawString("Puntaje:", 20, Escenario.LARGO / 15);
+        g.drawString("Puntaje:", 20, Escenario.ALTO / 15);
         g.setPaint(Color.red);
-        g.drawString(jugador.getPuntaje() + "", 100, Escenario.LARGO / 15);
+        g.drawString(jugador.getPuntaje() + "", 100, Escenario.ALTO / 15);
     }
 
     public void pintarVida(Graphics2D g) {
         g.setPaint(Color.red);
-        g.fillRect(280, Escenario.LARGO / 15 - 17, Jugador.VIDA_MAXIMA, 30);
+        g.fillRect(280, Escenario.ALTO / 15 - 17, Jugador.VIDA_MAXIMA, 30);
 
         g.setPaint(Color.blue);
-        g.fillRect(280/*+Jugador.MAX_VIDA-jugador.getVida()*/, Escenario.LARGO / 15 - 17, jugador.getVida(), 30);
+        g.fillRect(280/*+Jugador.MAX_VIDA-jugador.getVida()*/, Escenario.ALTO / 15 - 17, jugador.getVida(), 30);
 
         g.setFont(new Font("Arial", Font.BOLD, 20));
         g.setPaint(Color.green);
-        g.drawString("Vida", 220, Escenario.LARGO / 15);
+        g.drawString("Vida", 220, Escenario.ALTO / 15);
 
     }
 
@@ -199,9 +201,9 @@ public class Contra extends Canvas implements Escenario, KeyListener {
         g.setFont(new Font("Arial", Font.BOLD, 12));
         g.setColor(Color.white);
         if (usedTime > 0) {
-            g.drawString(String.valueOf(1000 / usedTime) + " fps", Escenario.ANCHO - 50, Escenario.LARGO);
+            g.drawString(String.valueOf(1000 / usedTime) + " fps", Escenario.ANCHO - 50, Escenario.ALTO);
         } else {
-            g.drawString("--- fps", Escenario.ANCHO - 50, Escenario.LARGO);
+            g.drawString("--- fps", Escenario.ANCHO - 50, Escenario.ALTO);
         }
     }
 
@@ -221,7 +223,7 @@ public class Contra extends Canvas implements Escenario, KeyListener {
         Graphics2D g = (Graphics2D) strategy.getDrawGraphics();
         g.setColor(Color.white);
         g.setFont(new Font("Arial", Font.BOLD, 20));
-        g.drawString("FIN DEL JUEGO", Escenario.ANCHO / 2 - 50, Escenario.LARGO / 2 - 100);
+        g.drawString("FIN DEL JUEGO", Escenario.ANCHO / 2 - 50, Escenario.ALTO / 2 - 100);
         strategy.show();
     }
 
@@ -229,8 +231,8 @@ public class Contra extends Canvas implements Escenario, KeyListener {
         Graphics2D g = (Graphics2D) strategy.getDrawGraphics();
         g.setColor(Color.white);
         g.setFont(new Font("Arial", Font.BOLD, 20));
-        g.drawString("     GANASTE", Escenario.ANCHO / 2 - 50, Escenario.LARGO / 2 - 100);
-        g.drawString("Puntaje total : " + jugador.getPuntaje(), Escenario.ANCHO / 2 - 50, Escenario.LARGO / 2 - 70);
+        g.drawString("     GANASTE", Escenario.ANCHO / 2 - 50, Escenario.ALTO / 2 - 100);
+        g.drawString("Puntaje total : " + jugador.getPuntaje(), Escenario.ANCHO / 2 - 50, Escenario.ALTO / 2 - 70);
         strategy.show();
     }
 
@@ -238,7 +240,7 @@ public class Contra extends Canvas implements Escenario, KeyListener {
         Graphics2D g = (Graphics2D) strategy.getDrawGraphics();
         g.setColor(Color.white);
         g.setFont(new Font("Arial", Font.BOLD, 20));
-        g.drawString("PAUSA", Escenario.ANCHO / 2 - 50, Escenario.LARGO / 2 - 100);
+        g.drawString("PAUSA", Escenario.ANCHO / 2 - 50, Escenario.ALTO / 2 - 100);
         strategy.show();
     }
 
