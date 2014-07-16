@@ -47,6 +47,30 @@ public class Bala extends Actor {
                 remover();
             }
         }
+        if (direccion == 4) {
+            x -= velocidadBala;
+            if (x <= 0) {
+                remover();
+            }  
+            
+            y -= velocidadBala;
+            if (y <= 0) {
+                remover();
+            }
+        }
+        if (direccion == 5) {
+            x += velocidadBala;
+            if (x > 800) {
+                remover();
+            } 
+            
+            y -= velocidadBala;
+            if (y <= 0) {
+                remover();
+            }
+        }
+        
+        
     }
 
     public void colision(Actor a) {

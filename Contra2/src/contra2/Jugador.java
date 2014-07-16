@@ -13,7 +13,8 @@ public class Jugador extends Actor {
     protected int vy;//almacena la velocidad del jugador  para el desplazamiento vertical
     private boolean arriba, abajo, izquierda, derecha;
 
-    private static int j = 0, w = 7;//Auxiliar para carga de imagenes (j = derecha) - (w: izquierda) - (sj: salto derecha)
+    private static int j = 0, w = 7;//Auxiliar para carga de imagenes (j = derecha) - (w: izquierda)
+    private static int ju = 0, wu = 7;//Auxiliar para carga de imagenes diagonal (ju = arriba derecha) - (wu: arriba izquierda)
     private boolean posIzq;
     private final int velocidadImagen = 2;
     private int t = 0;
@@ -41,7 +42,13 @@ public class Jugador extends Actor {
             //Saltar derecha 18
             new Imagen(319, 451, 26, 21), new Imagen(349, 448, 26, 21), new Imagen(377, 451, 26, 21), new Imagen(408, 448, 26, 21),
             //Saltar izquierda   22
-            new Imagen(286, 451, 26, 21), new Imagen(260, 448, 26, 21), new Imagen(228, 451, 26, 21), new Imagen(201, 448, 26, 21)
+            new Imagen(286, 451, 26, 21), new Imagen(260, 448, 26, 21), new Imagen(228, 451, 26, 21), new Imagen(201, 448, 26, 21),
+            //Diagonal arriba derecha
+            new Imagen(318, 214, 30, 48), new Imagen(356, 214, 30, 48), new Imagen(397, 214, 30, 48), new Imagen(438, 214, 30, 48),
+            new Imagen(483, 214, 30, 48),
+            //Diagonal arriba izquierda
+            new Imagen(285, 214, 30, 48), new Imagen(244, 214, 30, 48), new Imagen(204, 214, 30, 48), new Imagen(160, 214, 30, 48),
+            new Imagen(114, 214, 30, 48)
         };
         setNombreImagen(imagenes);
         vida = VIDA_MAXIMA;
@@ -91,32 +98,48 @@ public class Jugador extends Actor {
         t++;
         if (t % velocidadImagen == 0) {
             t = 0;
-            if (!salto && izquierda) {
-                if (w == 14) {
-                    w = 7;
+            if (!salto){
+                if (izquierda) {
+                    if (arriba) {
+                        if (wu == 35) {
+                            wu = 31;
+                        }
+                        setCurrentFrame(wu);
+                        wu++;
+                        ju = 26;
+                    } else {
+                        if (w == 14) {
+                            w = 7;
+                        }
+                        setCurrentFrame(w);
+                        w++;
+                        j = 0;
+                    }
+                    posIzq = true;
+                } else if (derecha) {
+                    if (arriba) {
+                        if (ju == 30) {
+                            ju = 26;
+                        }
+                        setCurrentFrame(ju);
+                        ju++;
+                        wu = 30;
+                    } else {
+                        if (j == 7) {
+                            j = 0;
+                        }
+                        setCurrentFrame(j);
+                        j++;
+                        w = 7;
+                    }
+                    posIzq = false;
+                } else if (arriba) {
+                    setCurrentFrame(posIzq ? 15 : 14);
+                } else if (abajo) {
+                    setCurrentFrame(posIzq ? 17 : 16);
                 }
-                setCurrentFrame(w);
-                w++;
-                j = 0;
-                posIzq = true;
-            }
-            if (!salto && derecha) {
-                if (j == 7) {
-                    j = 0;
-                }
-                setCurrentFrame(j);
-                j++;
-                w = 7;
-                posIzq = false;
-            }
-            if (!salto && arriba) {
-                setCurrentFrame(posIzq ? 15 : 14);
-            }
 
-            if (!salto && abajo) {
-                setCurrentFrame(posIzq ? 17 : 16);
             }
-
             if (salto) {
                 if (auxContSalto == 6) {
                     subiendo = false;
@@ -135,6 +158,7 @@ public class Jugador extends Actor {
                     }
                     auxContImagenSalto = 1;
                 }
+
             }
             if (salto && !posIzq) {
                 if (auxContImagenSalto + 17 == 21) {
@@ -152,28 +176,37 @@ public class Jugador extends Actor {
                 setCurrentFrame(auxContImagenSalto + 21);
                 auxContImagenSalto++;
             }
+            
         }
     }
 
     public void keyPressed(KeyEvent e) {
         switch (e.getKeyCode()) {
             case KeyEvent.VK_LEFT:
-                if (auxContSalto == 0)super.setY(Escenario.ALTO - super.getAlto());
+                if (auxContSalto == 0) {
+                    super.setY(Escenario.ALTO - super.getAlto());
+                }
                 izquierda = true;
                 break;
 
             case KeyEvent.VK_RIGHT:
-                if (auxContSalto == 0)super.setY(Escenario.ALTO - super.getAlto());
+                if (auxContSalto == 0) {
+                    super.setY(Escenario.ALTO - super.getAlto());
+                }
                 derecha = true;
                 break;
 
             case KeyEvent.VK_UP:
-                if (auxContSalto == 0)super.setY(Escenario.ALTO - super.getAlto());
+                if (auxContSalto == 0) {
+                    super.setY(Escenario.ALTO - super.getAlto());
+                }
                 arriba = true;
                 break;
 
             case KeyEvent.VK_DOWN:
-                if (auxContSalto == 0)super.setY(Escenario.ALTO - super.getAlto());
+                if (auxContSalto == 0) {
+                    super.setY(Escenario.ALTO - super.getAlto());
+                }
                 abajo = true;
                 break;
 
@@ -188,29 +221,38 @@ public class Jugador extends Actor {
                 fuego();
                 break;
         }
+
         updateSpeed();
     }
 
     public void keyReleased(KeyEvent e) {
         switch (e.getKeyCode()) {
             case KeyEvent.VK_LEFT:
-                if (auxContSalto == 0)super.setY(Escenario.ALTO - super.getAlto());
+                if (auxContSalto == 0) {
+                    super.setY(Escenario.ALTO - super.getAlto());
+                }
                 izquierda = false;
                 break;
 
             case KeyEvent.VK_RIGHT:
-                if (auxContSalto == 0)super.setY(Escenario.ALTO - super.getAlto());
+                if (auxContSalto == 0) {
+                    super.setY(Escenario.ALTO - super.getAlto());
+                }
                 derecha = false;
                 break;
 
             case KeyEvent.VK_UP:
-                if (auxContSalto == 0)super.setY(Escenario.ALTO - super.getAlto());
+                if (auxContSalto == 0) {
+                    super.setY(Escenario.ALTO - super.getAlto());
+                }
                 setCurrentFrame(posIzq ? 7 : 0);
                 arriba = false;
                 break;
 
             case KeyEvent.VK_DOWN:
-                if (auxContSalto == 0)super.setY(Escenario.ALTO - super.getAlto());
+                if (auxContSalto == 0) {
+                    super.setY(Escenario.ALTO - super.getAlto());
+                }
                 setCurrentFrame(posIzq ? 7 : 0);
                 abajo = false;
                 break;
@@ -223,33 +265,45 @@ public class Jugador extends Actor {
         Bala.setVelocidadBala(20);
         if (posIzq == true) {
             b.setDireccion(1);
-            b.setX(x - 10);
-            b.setY(y + 35);
+            b.setX(x + 15);
+            b.setY(y - 10);
         }
         if (posIzq == false) {
             b.setDireccion(2);
-            b.setX(x + 155);
-            b.setY(y + 48);
+            b.setX(x + 15);
+            b.setY(y - 10);
         }
         if (posIzq == true && abajo == true) {
             b.setDireccion(1);
-            b.setX(x - 10);
-            b.setY(y + 28);
+            b.setX(x + 15);
+            b.setY(y + 10);
         }
         if (posIzq == false && abajo == true) {
             b.setDireccion(2);
-            b.setX(x + 155);
-            b.setY(y + 28);
+            b.setX(x + 25);
+            b.setY(y + 11);
         }
         if (posIzq == true && arriba == true) {
             b.setDireccion(3);
-            b.setX(x + 38);
-            b.setY(y);
+            b.setX(x + 10);
+            b.setY(y - 25);
         }
         if (posIzq == false && arriba == true) {
             b.setDireccion(3);
-            b.setX(x + 50);
-            b.setY(y);
+            b.setX(x + 15);
+            b.setY(y - 25);
+        }
+        
+        if (izquierda == true && arriba == true) {
+            b.setDireccion(4);
+            b.setX(x + 5);
+            b.setY(y - 15);
+        }
+        
+        if (derecha == true && arriba == true) {
+            b.setDireccion(5);
+            b.setX(x + 10);
+            b.setY(y - 15);
         }
 
         escenario.agregarActor(b);
