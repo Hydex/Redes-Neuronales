@@ -14,9 +14,9 @@ public class Fondo extends Actor {
 
     public Fondo(Escenario escenario) {
         super(escenario);
-	setNombreImagen(new String[]{"fondo.jpg"});
+	setNombreImagen(new String[]{"escena.png"});
 		
-	auxFondo = cargaDeImagen.getImagenes("fondo.jpg");
+	auxFondo = cargaDeImagen.getImagenes(this.nombreImagen[0]);
 	this.ancho = auxFondo.getWidth();
 	this.alto = auxFondo.getHeight();
 	this.x = -(auxFondo.getWidth()-this.escenario.ANCHO)/2;
