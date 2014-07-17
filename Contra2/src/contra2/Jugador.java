@@ -88,8 +88,8 @@ public class Jugador extends Actor {
             }
         }
         if (derecha) {
-            if (!(x + getAncho() > Escenario.ANCHO)) {
-                vx = VELOCIDAD_JUGADOR;
+            if (!(x + getAncho()+(0-this.escenario.getFondo().getX()) > this.escenario.getFondo().getAncho())) {
+                vx = 3;
             }
         }
     }
