@@ -237,6 +237,14 @@ public class Contra extends Canvas implements Escenario, KeyListener {
     public Jugador getJugador() {
         return jugador;
     }
+    
+    public Jugador getEnemigo() {
+        return enemigo;
+    }
+    
+    public ArrayList getBalas() {
+        return actores;
+    }
 
     public void pintarFinDeJuego() {
         Graphics2D g = (Graphics2D) strategy.getDrawGraphics();

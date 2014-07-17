@@ -9,6 +9,7 @@ package contra2;
  * @author Administrador
  */
 import java.awt.image.ImageObserver;
+import java.util.ArrayList;
 
 public interface Escenario extends ImageObserver {
     
@@ -24,6 +25,10 @@ public interface Escenario extends ImageObserver {
     public void agregarActor(Actor a);
 
     public Jugador getJugador();
+    
+    public Jugador getEnemigo();
+    
+    public ArrayList getBalas();
 
     public void finDelJuego();
 
