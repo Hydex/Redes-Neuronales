@@ -268,37 +268,21 @@ public class Jugador extends Actor {
         updateSpeed();
     }
 
-    public void movimientos(boolean izquierda, boolean derecha, boolean arriba, boolean abajo, boolean salto, boolean disparo) {
-        if (!esEnemigo) {
+    public void fuego() {
+        boolean auxCont = true;
+        for (int i = 0; i < escenario.getBalas().size(); i++) {
+            if (escenario.getBalas().get(i) instanceof Bala) {
+                Bala auxBala = (Bala) escenario.getBalas().get(i);
+                if (auxBala.esEnemigo = this.esEnemigo) {
+                    auxCont = false;
+                    break;
+                }
+            }
+        }
+         if (!auxCont) {
             return;
         }
 
-        if (auxContSalto == 0) {
-            super.setY(Escenario.ALTO - super.getAlto());
-        }
-
-        this.izquierda = izquierda;
-        this.derecha = derecha;
-        this.arriba = arriba;
-        this.abajo = abajo;
-
-        if ((this.arriba && !arriba) || (this.abajo && !abajo)) {
-            setCurrentFrame(posIzq ? 7 : 0);
-        }
-
-        if (salto) {
-            if (auxContSalto == 0) {
-                this.salto = true;
-                subiendo = !subiendo;
-            }
-        }
-
-        if (disparo) {
-            fuego();
-        }
-    }
-
-    public void fuego() {
         Bala b = new Bala(escenario);
         Bala.setVelocidadBala(5);
         b.esEnemigo = this.esEnemigo;
@@ -375,15 +359,6 @@ public class Jugador extends Actor {
     }
 
     public void colision(Actor a) {
-        /*if (a instanceof Enemigo || a instanceof BalaMoustro) {
-         a.remover();
-         addPuntaje(40);
-         addVida(-20);
-         if (getVida() < 0) {
-         escenario.finDelJuego();
-         }
-         }*/
-
         if (a instanceof Bala) {
             if (this.esEnemigo != a.esEnemigo) {
                 a.remover();
@@ -395,69 +370,123 @@ public class Jugador extends Actor {
         }
     }
 
-    public void obtenerEntradas() {        
+    public int[] obtenerEntradas() {
         if (!esEnemigo) {
-            return;
+            return null;
         }
 
+        //PERSONAJE 
         int estado, enemigoProximidad, ubicacionEnemigoX, ubicacionEnemigoY;
         int balaProximidad = 0, direccionBalaX = 0, direccionBalaY = 0, ubicacionBalaX = 0, ubicacionBalaY = 0;
         //Personaje estado
         estado = (abajo ? -1 : (salto ? 1 : 0));
-        System.out.println("Personaje estado: " + estado);
+        //System.out.println("Personaje estado: " + estado);
 
-        //ENEMIGO
+        //ESCENARIO
+        int pared = this.x < 20 ? -1 : (this.x > (escenario.ANCHO - 20) ? 1 : 0);
+        int piso = salto ? -1 : 0;
+
+        //PENEMIGO
         double distanciaEnemigoX = escenario.getJugador().x - this.x;
         double distanciaEnemigoY = escenario.getJugador().y - this.y;
         //Enemigo posicion-distancia
         double auxEnemigoProximidad = Math.sqrt((Math.pow(distanciaEnemigoX, 2) + Math.pow(distanciaEnemigoY, 2)));
-        enemigoProximidad = (auxEnemigoProximidad < 90 ? -1 : (auxEnemigoProximidad < 170 ? 0 : 1));
-        System.out.println("Enemigo posicion-distancia: " + enemigoProximidad);
+        enemigoProximidad = (auxEnemigoProximidad < 50 ? -1 : (auxEnemigoProximidad < 100 ? 0 : 1));
+        //System.out.println("Enemigo posicion-distancia: " + enemigoProximidad);
 
         //Enemigo ubicacion X
         ubicacionEnemigoX = (distanciaEnemigoX > 0 ? 1 : (distanciaEnemigoX < 0 ? -1 : 0));
-        System.out.println("Enemigo ubicacion X: " + ubicacionEnemigoX);
+        //System.out.println("Enemigo ubicacion X: " + ubicacionEnemigoX);
 
         //Enemigo ubicacion Y
         ubicacionEnemigoY = (distanciaEnemigoY > 0 ? 1 : (distanciaEnemigoY < 0 ? -1 : 0));
-        System.out.println("Enemigo ubicacion Y: " + ubicacionEnemigoY);
+        //System.out.println("Enemigo ubicacion Y: " + ubicacionEnemigoY);
 
         //BALAS
         int auxCont = 0;
         while (auxCont < escenario.getBalas().size()) {
+            if (escenario.getBalas().get(auxCont) instanceof Bala) {
+                Bala bala = (Bala) escenario.getBalas().get(auxCont);
+                if (!bala.esEnemigo) {
+                    double distanciaBalaX = bala.x - this.x;
+                    double distanciaBalaY = bala.y - this.y;
+                    //Bala posicion-distancia
+                    double auxBalaProximidad = Math.sqrt((Math.pow(distanciaBalaX, 2) + Math.pow(distanciaBalaY, 2)));
+                    balaProximidad = (auxBalaProximidad < 50 ? -1 : (auxBalaProximidad < 100 ? 0 : 1));
+                    //System.out.println("Bala posicion-distancia: " + balaProximidad);
+
+                    int auxBalaDireccion = bala.getDireccion();
+                    //Bala direccion X
+                    direccionBalaX = ((auxBalaDireccion == 1 || auxBalaDireccion == 4) ? -1 : ((auxBalaDireccion == 2 || auxBalaDireccion == 5) ? 1 : 0));
+                    //System.out.println("Bala direccion X: " + direccionBalaX);
+
+                    //Bala direccion Y
+                    direccionBalaY = ((auxBalaDireccion == 1 || auxBalaDireccion == 2) ? 0 : 1);
+                    //System.out.println("Bala direccion Y: " + direccionBalaY);
+
+                    //Bala ubicacion X
+                    ubicacionBalaX = (distanciaBalaX > 0 ? 1 : (distanciaBalaX < 0 ? -1 : 0));
+                    //System.out.println("Bala ubicacion X: " + ubicacionBalaX);
+
+                    //Bala ubicacion Y
+                    ubicacionBalaY = (distanciaBalaY > 0 ? 1 : (distanciaBalaY < 0 ? -1 : 0));
+                    //System.out.println("Bala ubicacion Y: " + ubicacionBalaY);
+
+                    break;
+                }
+            }
             auxCont++;
+        }
 
-            Bala bala = (Bala) escenario.getBalas().get(auxCont);
-            if (!bala.esEnemigo) {
-                double distanciaBalaX = bala.x - this.x;
-                double distanciaBalaY = bala.y - this.y;
-                //Bala posicion-distancia
-                double auxBalaProximidad = Math.sqrt((Math.pow(distanciaBalaX, 2) + Math.pow(distanciaBalaY, 2)));
-                balaProximidad = (auxBalaProximidad < 90 ? -1 : (auxBalaProximidad < 170 ? 0 : 1));
-                System.out.println("Bala posicion-distancia: " + balaProximidad);
+        System.out.println("Vector entrada: [" + estado + "," + pared + "," + piso + ","
+                + enemigoProximidad + "," + ubicacionEnemigoX + "," + ubicacionEnemigoY + ","
+                + balaProximidad + "," + direccionBalaX + "," + direccionBalaY + "," + ubicacionBalaX + "," + ubicacionBalaY + "]");
 
-                int auxBalaDireccion = bala.getDireccion();
-                //Bala direccion X
-                direccionBalaX = ((auxBalaDireccion == 1 || auxBalaDireccion == 4) ? -1 : ((auxBalaDireccion == 2 || auxBalaDireccion == 5) ? 1 : 0));
-                System.out.println("Bala direccion X: " + direccionBalaX);
+        return new int[]{estado, pared, piso,
+            enemigoProximidad, ubicacionEnemigoX, ubicacionEnemigoY,
+            balaProximidad, direccionBalaX, direccionBalaY, ubicacionBalaX, ubicacionBalaY};
+    }
 
-                //Bala direccion Y
-                direccionBalaY = ((auxBalaDireccion == 1 || auxBalaDireccion == 2) ? 0 : 1);
-                System.out.println("Bala direccion Y: " + direccionBalaY);
-                
-                //Bala ubicacion X
-                ubicacionBalaX = (distanciaBalaX > 0 ? 1 : (distanciaBalaX < 0 ? -1 : 0));
-                System.out.println("Bala ubicacion X: " + ubicacionBalaX);
+    public void movimientosEnemigo(boolean[] movimientos) {
+        if (!esEnemigo || movimientos.length < 6) {
+            return;
+        }
 
-                //Bala ubicacion Y
-                ubicacionBalaY = (distanciaBalaY > 0 ? 1 : (distanciaBalaY < 0 ? -1 : 0));
-                System.out.println("Bala ubicacion Y: " + ubicacionBalaY);
+        boolean arriba = movimientos[0];
+        boolean abajo = movimientos[1];
+        boolean izquierda = movimientos[2];
+        boolean derecha = movimientos[3];
+        boolean salto = movimientos[4];
+        boolean disparo = movimientos[5];
 
-                break;
+        System.out.println("Vector salida: [" + (arriba ? 1 : 0) + "," + (abajo ? 1 : 0) + "," + (izquierda ? 1 : 0) + ","
+                + (derecha ? 1 : 0) + "," + (salto ? 1 : 0) + "," + (disparo ? 1 : 0) + "]");
+        System.out.println(" ");
+
+        if (auxContSalto == 0) {
+            super.setY(Escenario.ALTO - super.getAlto());
+        }
+
+        this.izquierda = izquierda;
+        this.derecha = derecha;
+        this.arriba = arriba;
+        this.abajo = !arriba;
+
+        if ((this.arriba && !arriba) || (this.abajo && !abajo)) {
+            setCurrentFrame(posIzq ? 7 : 0);
+        }
+
+        if (salto) {
+            if (auxContSalto == 0) {
+                this.salto = true;
+                subiendo = !subiendo;
             }
         }
-        
-        System.out.println("Vector final: ["+estado+","+enemigoProximidad+","+ubicacionEnemigoX+","+ubicacionEnemigoY+","+
-                           balaProximidad+","+direccionBalaX+","+direccionBalaY+","+ubicacionBalaX+","+ubicacionBalaY+"]");
+
+        if (disparo) {
+            fuego();
+        }
+
+        updateSpeed();
     }
 }
