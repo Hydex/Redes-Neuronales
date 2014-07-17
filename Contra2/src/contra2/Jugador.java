@@ -387,7 +387,7 @@ public class Jugador extends Actor {
         if (a instanceof Bala) {
             if (this.esEnemigo != a.esEnemigo) {
                 a.remover();
-                addVida(-20);
+                addVida(-10);
                 if (getVida() < 0) {
                     escenario.finDelJuego();
                 }
