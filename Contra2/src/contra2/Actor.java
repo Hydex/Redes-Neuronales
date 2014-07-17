@@ -22,6 +22,7 @@ public class Actor {
     protected boolean remover; // para remover un actor del juego
     
     protected boolean salto;
+    public boolean esEnemigo = false;
 
     public Actor(Escenario escenario) {
         this.escenario = escenario;

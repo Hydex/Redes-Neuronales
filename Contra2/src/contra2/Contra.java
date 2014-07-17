@@ -26,6 +26,7 @@ public class Contra extends Canvas implements Escenario, KeyListener {
     boolean finDelJuego = false, pausa = false;
     private int aux1 = 0, aux2 = 0, t = 0, velocidadMuerte = 4;
     Jugador jugador;
+    Jugador enemigo;
     Fondo fondo;
     Actor actor;//Enemigos, balas enemigas y las balas del jugador    Actor actor;//Enemigos, balas enemigas y las balas del jugador
     public int escala;
@@ -98,19 +99,18 @@ public class Contra extends Canvas implements Escenario, KeyListener {
 
         //Incializar enemigos
         actores = new ArrayList();
-        /*for (int i = 0; i < 1; i++) {
-            Enemigo m = new Enemigo(this);
-            m.setX(700);
-            m.setY((int) (Escenario.LARGO - 200));
-            m.setVx(1);
-            actores.add(m);
-        }*/
 
         //Incializar jugador principal
         jugador = new Jugador(this);
         jugador.setX(Escenario.ANCHO / 8);
         jugador.setY(Escenario.ALTO - jugador.getAlto());
-
+        
+        //Inicializar enemigo principal
+        enemigo = new Jugador(this);
+        enemigo.esEnemigo = true;
+        enemigo.setX((Escenario.ANCHO / 8) + 50);
+        enemigo.setY(Escenario.ALTO - jugador.getAlto());
+        
         strategy.show();
     }
     
@@ -130,26 +130,34 @@ public class Contra extends Canvas implements Escenario, KeyListener {
             }
         }
         jugador.acto();
+        enemigo.acto();
     }
 
     public void verificarColision() {
-        Rectangle dimensioJugador = jugador.getDimension();//dimensiones del fotograma del jugador
+        Rectangle dimensionJugador = jugador.getDimension();//dimensiones del fotograma del jugador
+        Rectangle dimensionEnemigo = enemigo.getDimension();//dimensiones del fotograma del enemigo
         for (int i = 0; i < actores.size(); i++) {
             Actor a1 = (Actor) actores.get(i);
             Rectangle r1 = a1.getDimension();
-            if (r1.intersects(dimensioJugador)) {
+            
+            if (r1.intersects(dimensionJugador)) {
                 jugador.colision(a1);
                 a1.colision(jugador);
             }  
             
-            for (int j = i + 1; j < actores.size(); j++) {
+            if (r1.intersects(dimensionEnemigo)) {
+                enemigo.colision(a1);
+                a1.colision(enemigo);
+            }
+            
+            /*for (int j = i + 1; j < actores.size(); j++) {
                 Actor a2 = (Actor) actores.get(j);
                 Rectangle r2 = a2.getDimension();
                 if (r1.intersects(r2)) {
                     a1.colision(a2);
                     a2.colision(a1);
                 }
-            }
+            }*/
         }
     }
 
@@ -167,15 +175,16 @@ public class Contra extends Canvas implements Escenario, KeyListener {
 
         pintarEstado(g);
         jugador.pintar(g);
+        enemigo.pintar(g);
         strategy.show();
     }
     
     //pinta puntaje y vida
     public void pintarEstado(Graphics2D g) 
     {
-        pintarPuntaje(g);
+        //pintarPuntaje(g);
         pintarVida(g);
-        pintarfps(g);
+        //pintarfps(g);
     }
 
     public void pintarPuntaje(Graphics2D g) {
@@ -187,16 +196,24 @@ public class Contra extends Canvas implements Escenario, KeyListener {
     }
 
     public void pintarVida(Graphics2D g) {
+        //VIDA HEROE
         g.setPaint(Color.red);
-        g.fillRect(280, Escenario.ALTO / 15 - 17, Jugador.VIDA_MAXIMA, 30);
-
+        g.fillRect(2, (Escenario.ALTO / 15) + 2, Jugador.VIDA_MAXIMA/8, 5);
         g.setPaint(Color.blue);
-        g.fillRect(280/*+Jugador.MAX_VIDA-jugador.getVida()*/, Escenario.ALTO / 15 - 17, jugador.getVida(), 30);
-
+        g.fillRect(2, (Escenario.ALTO / 15) + 2, jugador.getVida()/8, 5);
         g.setFont(new Font("Arial", Font.BOLD, 8));
         g.setPaint(Color.green);
-        g.drawString("Vida", 80, Escenario.ALTO / 15);
-
+        g.drawString("Heroe", 2, Escenario.ALTO / 15);
+        
+        
+        //VIDA ENEMIGO
+        g.setPaint(Color.red);
+        g.fillRect(Escenario.ANCHO - 102, (Escenario.ALTO / 15) + 2, Jugador.VIDA_MAXIMA/8, 5);
+        g.setPaint(Color.blue);
+        g.fillRect(Escenario.ANCHO - 102, (Escenario.ALTO / 15) + 2, enemigo.getVida()/8, 5);
+        g.setFont(new Font("Arial", Font.BOLD, 8));
+        g.setPaint(Color.green);
+        g.drawString("Enemigo", Escenario.ANCHO - 37, Escenario.ALTO / 15);
     }
 
     public void pintarfps(Graphics2D g) {
@@ -225,7 +242,7 @@ public class Contra extends Canvas implements Escenario, KeyListener {
         Graphics2D g = (Graphics2D) strategy.getDrawGraphics();
         g.setColor(Color.white);
         g.setFont(new Font("Arial", Font.BOLD, 20));
-        g.drawString("FIN DEL JUEGO", Escenario.ANCHO / 2 - 50, Escenario.ALTO / 2 - 100);
+        g.drawString("FIN DEL JUEGO", 300, 200);
         strategy.show();
     }
 
@@ -253,8 +270,7 @@ public class Contra extends Canvas implements Escenario, KeyListener {
     public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_ENTER) {
             pausa = !(pausa);
-        } else {
-            
+        } else {            
             switch (e.getKeyCode()) {
                 case KeyEvent.VK_LEFT:
                     System.out.println("pos jug : "+jugador.getX());

@@ -4,7 +4,7 @@ import java.awt.event.KeyEvent;
 
 public class Jugador extends Actor {
 
-    public static final int VIDA_MAXIMA = 300;
+    public static final int VIDA_MAXIMA = 800;
 
     protected Imagen[] imagenes; //Imagenes
     protected static final int VELOCIDAD_JUGADOR = 3;//velocidad del desplazamiento
@@ -98,7 +98,7 @@ public class Jugador extends Actor {
         t++;
         if (t % velocidadImagen == 0) {
             t = 0;
-            if (!salto){
+            if (!salto) {
                 if (izquierda) {
                     if (arriba) {
                         if (wu == 35) {
@@ -176,11 +176,15 @@ public class Jugador extends Actor {
                 setCurrentFrame(auxContImagenSalto + 21);
                 auxContImagenSalto++;
             }
-            
+
         }
     }
 
     public void keyPressed(KeyEvent e) {
+        if (esEnemigo) {
+            return;
+        }
+
         switch (e.getKeyCode()) {
             case KeyEvent.VK_LEFT:
                 if (auxContSalto == 0) {
@@ -226,6 +230,10 @@ public class Jugador extends Actor {
     }
 
     public void keyReleased(KeyEvent e) {
+        if (esEnemigo) {
+            return;
+        }
+
         switch (e.getKeyCode()) {
             case KeyEvent.VK_LEFT:
                 if (auxContSalto == 0) {
@@ -260,9 +268,40 @@ public class Jugador extends Actor {
         updateSpeed();
     }
 
+    public void movimientos(boolean izquierda, boolean derecha, boolean arriba, boolean abajo, boolean salto, boolean disparo) {
+        if (!esEnemigo) {
+            return;
+        }
+
+        if (auxContSalto == 0) {
+            super.setY(Escenario.ALTO - super.getAlto());
+        }
+
+        this.izquierda = izquierda;
+        this.derecha = derecha;
+        this.arriba = arriba;
+        this.abajo = abajo;
+
+        if ((this.arriba && !arriba) || (this.abajo && !abajo)) {
+            setCurrentFrame(posIzq ? 7 : 0);
+        }
+
+        if (salto) {
+            if (auxContSalto == 0) {
+                this.salto = true;
+                subiendo = !subiendo;
+            }
+        }
+
+        if (disparo) {
+            fuego();
+        }
+    }
+
     public void fuego() {
         Bala b = new Bala(escenario);
         Bala.setVelocidadBala(20);
+        b.esEnemigo = this.esEnemigo;
         if (posIzq == true) {
             b.setDireccion(1);
             b.setX(x + 15);
@@ -293,13 +332,13 @@ public class Jugador extends Actor {
             b.setX(x + 15);
             b.setY(y + 5);
         }
-        
+
         if (izquierda == true && arriba == true) {
             b.setDireccion(4);
             b.setX(x + 5);
             b.setY(y + 15);
         }
-        
+
         if (derecha == true && arriba == true) {
             b.setDireccion(5);
             b.setX(x + 10);
@@ -336,12 +375,22 @@ public class Jugador extends Actor {
     }
 
     public void colision(Actor a) {
-        if (a instanceof Enemigo || a instanceof BalaMoustro) {
-            a.remover();
-            addPuntaje(40);
-            addVida(-20);
-            if (getVida() < 0) {
-                escenario.finDelJuego();
+        /*if (a instanceof Enemigo || a instanceof BalaMoustro) {
+         a.remover();
+         addPuntaje(40);
+         addVida(-20);
+         if (getVida() < 0) {
+         escenario.finDelJuego();
+         }
+         }*/
+
+        if (a instanceof Bala) {
+            if (this.esEnemigo != a.esEnemigo) {
+                a.remover();
+                addVida(-20);
+                if (getVida() < 0) {
+                    escenario.finDelJuego();
+                }
             }
         }
     }

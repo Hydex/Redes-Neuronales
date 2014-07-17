@@ -74,8 +74,9 @@ public class Bala extends Actor {
     }
 
     public void colision(Actor a) {
-        if (a instanceof Enemigo) {
-            remover();
+        if (a instanceof Jugador) {
+            if(a.esEnemigo != this.esEnemigo)
+                remover();
         }
     }
 }
