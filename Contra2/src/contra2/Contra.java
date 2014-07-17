@@ -179,11 +179,11 @@ public class Contra extends Canvas implements Escenario, KeyListener {
     }
 
     public void pintarPuntaje(Graphics2D g) {
-        g.setFont(new Font("Arial", Font.BOLD, 20));
+        g.setFont(new Font("Arial", Font.BOLD, 8));
         g.setPaint(Color.green);
-        g.drawString("Puntaje:", 20, Escenario.ALTO / 15);
+        g.drawString("Puntaje:", 10, Escenario.ALTO / 15);
         g.setPaint(Color.red);
-        g.drawString(jugador.getPuntaje() + "", 100, Escenario.ALTO / 15);
+        g.drawString(jugador.getPuntaje() + "", 45, Escenario.ALTO / 15);
     }
 
     public void pintarVida(Graphics2D g) {
@@ -193,9 +193,9 @@ public class Contra extends Canvas implements Escenario, KeyListener {
         g.setPaint(Color.blue);
         g.fillRect(280/*+Jugador.MAX_VIDA-jugador.getVida()*/, Escenario.ALTO / 15 - 17, jugador.getVida(), 30);
 
-        g.setFont(new Font("Arial", Font.BOLD, 20));
+        g.setFont(new Font("Arial", Font.BOLD, 8));
         g.setPaint(Color.green);
-        g.drawString("Vida", 220, Escenario.ALTO / 15);
+        g.drawString("Vida", 80, Escenario.ALTO / 15);
 
     }
 

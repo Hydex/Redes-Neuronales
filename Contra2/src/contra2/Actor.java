@@ -45,7 +45,7 @@ public class Actor {
         } else {
             if (imagenes[numeroImagen].getImagen() == null) 
                 cargaDeImagen.getImagenes(this.imagenes[numeroImagen]);            
-            g.drawImage(imagenes[numeroImagen].getImagen(), x,(salto ? y - 20 : y-(imagenes[numeroImagen].getHeight()-20)), escenario);
+            g.drawImage(imagenes[numeroImagen].getImagen(), x,(salto ? y - 20 : y-(imagenes[numeroImagen].getHeight()-20))+30, escenario);
         }
     }
 

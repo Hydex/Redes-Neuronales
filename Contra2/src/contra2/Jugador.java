@@ -15,7 +15,7 @@ public class Jugador extends Actor {
 
     private static int j = 0, w = 7;//Auxiliar para carga de imagenes (j = derecha) - (w: izquierda)
     private static int ju = 0, wu = 7;//Auxiliar para carga de imagenes diagonal (ju = arriba derecha) - (wu: arriba izquierda)
-    private boolean posIzq;
+    private boolean posIzq = false;
     private final int velocidadImagen = 2;
     private int t = 0;
 
@@ -266,44 +266,44 @@ public class Jugador extends Actor {
         if (posIzq == true) {
             b.setDireccion(1);
             b.setX(x + 15);
-            b.setY(y - 10);
+            b.setY(y + 20);
         }
         if (posIzq == false) {
             b.setDireccion(2);
             b.setX(x + 15);
-            b.setY(y - 10);
+            b.setY(y + 20);
         }
         if (posIzq == true && abajo == true) {
             b.setDireccion(1);
             b.setX(x + 15);
-            b.setY(y + 10);
+            b.setY(y + 40);
         }
         if (posIzq == false && abajo == true) {
             b.setDireccion(2);
             b.setX(x + 25);
-            b.setY(y + 11);
+            b.setY(y + 41);
         }
         if (posIzq == true && arriba == true) {
             b.setDireccion(3);
             b.setX(x + 10);
-            b.setY(y - 25);
+            b.setY(y + 5);
         }
         if (posIzq == false && arriba == true) {
             b.setDireccion(3);
             b.setX(x + 15);
-            b.setY(y - 25);
+            b.setY(y + 5);
         }
         
         if (izquierda == true && arriba == true) {
             b.setDireccion(4);
             b.setX(x + 5);
-            b.setY(y - 15);
+            b.setY(y + 15);
         }
         
         if (derecha == true && arriba == true) {
             b.setDireccion(5);
             b.setX(x + 10);
-            b.setY(y - 15);
+            b.setY(y + 15);
         }
 
         escenario.agregarActor(b);
