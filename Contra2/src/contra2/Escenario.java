@@ -17,6 +17,8 @@ public interface Escenario extends ImageObserver {
 
     public static final int SPEED = 10;
 
+    public Fondo getFondo();
+    
     public CargaDeImagen getCargaDeImagen();
 
     public void agregarActor(Actor a);

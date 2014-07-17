@@ -273,14 +273,13 @@ public class Contra extends Canvas implements Escenario, KeyListener {
         } else {            
             switch (e.getKeyCode()) {
                 case KeyEvent.VK_LEFT:
-                    System.out.println("pos jug : "+jugador.getX());
                     if(fondo.getX()<0){
-			fondo.setX(fondo.getX()+2);
+			fondo.setX(fondo.getX()+3);
                     }
                     break;
-		case KeyEvent.VK_RIGHT:
-                    if(fondo.getX()>-(fondo.getAncho()-this.getWidth())){
-			fondo.setX(fondo.getX()-2);
+		case KeyEvent.VK_RIGHT: 
+                    if(jugador.getX()+jugador.getAncho()+(0-fondo.getX())<fondo.getAncho()){ 
+			fondo.setX(fondo.getX()-3);
                     }
                     break;
             }
@@ -316,5 +315,9 @@ public class Contra extends Canvas implements Escenario, KeyListener {
             nv.setY(100);
             agregarActor(nv);
         }
+    }
+
+    public Fondo getFondo() {
+        return fondo;
     }
 }
