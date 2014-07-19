@@ -11,8 +11,9 @@ import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferStrategy;
+import java.io.File;
+import java.net.URL;
 import java.util.ArrayList;
-
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -101,13 +102,13 @@ public class Contra extends Canvas implements Escenario, KeyListener {
 
         //Incializar jugador principal
         jugador = new Jugador(this);
-        jugador.setX(Escenario.ANCHO / 8);
+        jugador.setX((Escenario.ANCHO / 8) + 100);
         jugador.setY(Escenario.ALTO - jugador.getAlto());
 
         //Inicializar enemigo principal
         enemigo = new Jugador(this);
         enemigo.esEnemigo = true;
-        enemigo.setX((Escenario.ANCHO / 8) + 50);
+        enemigo.setX((Escenario.ANCHO / 8) );
         enemigo.setY(Escenario.ALTO - jugador.getAlto());
 
         strategy.show();
@@ -118,11 +119,11 @@ public class Contra extends Canvas implements Escenario, KeyListener {
     public void iniciarRedNeuronal() {
         int entradas = 11;
         int salidas = 6;
-        int ejemplos = 128;
+        int ejemplos = 256;
         int ocultas = 0;
         int pasos = 2500;
         rJava = new RJava();
-        rJava.init("D:\\datos.csv", entradas, salidas, ejemplos, ocultas, pasos);
+        rJava.init("C:\\datos-entrenamiento.csv", entradas, salidas, ejemplos, ocultas, pasos);
     }
 
     //genera los actores y marca a los que tiene que ser  removidos
@@ -282,23 +283,6 @@ public class Contra extends Canvas implements Escenario, KeyListener {
     public void desplazamientoFondo() {
         if (aux1 == 1000) {
             finDelJuego();
-        }
-
-        aux1++;
-        if (jugador.getX() >= 200) {
-            fondo.setVelocidadFondo(fondo.getVelocidadFondo() - 7);
-        }
-        if (aux1 % 100 == 0) {
-            aux2++;
-            Enemigo n = new Enemigo(this);
-            n.llamada(aux2);
-        }
-        if (aux1 % 150 == 0) {
-            NaveVida nv = new NaveVida(this);
-            nv.setVx(5);
-            nv.setX(750);
-            nv.setY(100);
-            agregarActor(nv);
         }
     }
 

@@ -9,6 +9,7 @@ package rjava;
 import java.io.*;
 import java.awt.Frame;
 import java.awt.FileDialog;
+import java.net.URL;
 
 import java.util.Enumeration;
 
@@ -185,11 +186,12 @@ public class RJava {
     public static void main(String[] args) {        
         int entradas = 11;
         int salidas = 6;
-        int ejemplos = 128;
+        int ejemplos = 256;
         int ocultas = 0;
-        int pasos = 2500;
+        int pasos = 5000;
         RJava rJava = new RJava();
-        rJava.init("D:\\datos.csv", entradas, salidas, ejemplos, ocultas, pasos);
+        rJava.init("C:\\datos-entrenamiento.csv", entradas, salidas, ejemplos, ocultas, pasos);
         rJava.pintarSalida(rJava.obtenerSalidas(new int[]{0,0,0,1,1,0,-1,1,-1,1,-1}));
+        
     }
 }

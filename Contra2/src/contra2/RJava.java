@@ -66,7 +66,7 @@ public class RJava {
         sbComp.append("))");
         rCodigo.append(sbComp.toString()+SALTO);
         re.eval(sbComp.toString());
-        //System.out.println("##"+sbComp.toString()+"##");
+        System.out.println("entrdas R: "+sbComp.toString()+"");
         REXP rexpR = re.eval("net.result$net.result[1,]");
         //System.out.println("valores::"+rexpR);
         double[] valores = rexpR.asDoubleArray();

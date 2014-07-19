@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package contra2;
 
 public class Bala extends Actor {
@@ -68,8 +64,7 @@ public class Bala extends Actor {
             if (y <= 0) {
                 remover();
             }
-        }
-        
+        }      
         
     }
 
